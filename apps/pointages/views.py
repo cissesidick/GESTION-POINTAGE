@@ -130,16 +130,28 @@ def historique(request):
 
 @login_required
 def api_verifier_zone(request):
-    if request.method != 'POST': return JsonResponse({'error': 'Method not allowed'}, status=405)
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Method not allowed'}, status=405)
+
     data = json.loads(request.body)
-    lat, lng = float(data['lat']), float(data['lng'])
-    
-    request.session['position_gps'] = {'lat': lat, 'lng': lng}
-    if request.user.peut_bypasser_geo:
-        return JsonResponse({'autorise': True, 'bypass': True, 'message': "Exclus du géofencing."})
-    
+
+    try:
+        lat = float(data.get('lat'))
+        lng = float(data.get('lng'))
+    except (TypeError, ValueError):
+        return JsonResponse({'error': 'Coordonnées GPS invalides'}, status=400)
+
+    # Enregistrer la position GPS dans la session
+    request.session['position_gps'] = {
+        'lat': lat,
+        'lng': lng
+    }
+
+    # Vérifier la zone (admin inclus maintenant)
     res = verifier_zone(lat, lng)
+
     request.session['position_gps']['distance'] = res['distance_metres']
+
     return JsonResponse(res)
 
 @login_required
