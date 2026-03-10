@@ -6,10 +6,10 @@ from django.conf import settings
 import math
 
 def calculer_distance_metres(lat1: float, lng1: float, lat2: float, lng2: float) -> float:
-    R = 6_371_000  # Rayon Terre en mètres
+    R = 6_371_000  # Rayon Terre
     phi1, phi2 = math.radians(lat1), math.radians(lat2)
     d_phi, d_lambda = math.radians(lat2-lat1), math.radians(lng2-lng1)
-    a = (math.sin(d_phi / 2) ** 2 + math.cos(phi1) * math.cos(phi2) * math.sin(d_lambda / 2) ** 2)
+    a = math.sin(d_phi / 2) ** 2 + math.cos(phi1) * math.cos(phi2) * math.sin(d_lambda / 2) ** 2
     return R * (2 * math.atan2(math.sqrt(a), math.sqrt(1 - a)))
 
 def verifier_zone(latitude: float, longitude: float) -> dict:
@@ -32,15 +32,13 @@ def geofencing_requis(view_func):
         
         pos = request.session.get('position_gps')
         if not pos:
-            # Aucun GPS enregistré → refus complet
             messages.error(request, "Vous devez être dans la zone pour pointer. GPS requis.")
-            return redirect('pointage_page')  # rediriger vers la page de pointage
+            return redirect('pointages:pointer')  # <- correction ici
         
         res = verifier_zone(pos['lat'], pos['lng'])
         if not res['autorise']:
-            # Hors zone → refus complet
             messages.error(request, f"Impossible de pointer : {res['message']}")
-            return redirect('pointage_page')  # ou renvoyer JsonResponse si API
+            return redirect('pointages:pointer')  # <- correction ici
        
         # Si dans la zone → accès autorisé
         return view_func(request, *args, **kwargs)
