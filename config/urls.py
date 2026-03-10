@@ -7,5 +7,5 @@ urlpatterns = [
     path('auth/',      include('apps.accounts.urls',  namespace='accounts')),
     path('employes/',  include('apps.employes.urls',  namespace='employes')),
     path('pointages/', include('apps.pointages.urls', namespace='pointages')),
-    path('', RedirectView.as_view(url='/pointages/dashboard/', permanent=False)),
+    path('', RedirectView.as_view(url='/auth/login/', permanent=False)),
 ]
