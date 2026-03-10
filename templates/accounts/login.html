@@ -20,11 +20,13 @@
       <p class="text-muted small">Système de pointage entreprise</p>
     </div>
 
+    {# On n'affiche QUE les messages d'erreur ici — jamais les succès #}
     {% for message in get_messages(request) %}
-      <div class="alert alert-{{ 'success' if 'success' in message.tags else 'danger' }} small">
-        {% if 'success' in message.tags %}<i class="bi bi-check-circle-fill me-1"></i>{% endif %}
-        {{ message }}
-      </div>
+      {% if 'success' not in message.tags %}
+        <div class="alert alert-danger small">
+          {{ message }}
+        </div>
+      {% endif %}
     {% endfor %}
 
     <form method="POST" action="{{ url('accounts:login') }}" id="login-form">
@@ -110,7 +112,7 @@ document.getElementById('login-form').addEventListener('submit', function(e) {
             // ANIMATION WOW
             overlay.classList.add('active');
             
-            // Redirection RAPIDE (1.2s)
+            // Redirection (1.2s)
             setTimeout(() => {
                 window.location.href = data.redirect_url;
             }, 1200);
@@ -125,7 +127,7 @@ document.getElementById('login-form').addEventListener('submit', function(e) {
         // Afficher l'erreur
         const alert = document.createElement('div');
         alert.className = 'alert alert-danger small animate-fade-up';
-        alert.textContent = error.message || "Erreur de connexion";
+        alert.textContent = error.message || "Identifiant ou mot de passe incorrect";
         form.parentNode.insertBefore(alert, form);
     });
 });

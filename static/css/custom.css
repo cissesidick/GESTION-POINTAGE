@@ -161,6 +161,7 @@ body {
 .table-responsive {
   border: none;
 }
+
 @keyframes fadeInUp {
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
@@ -175,25 +176,32 @@ body {
   animation: fadeInUp 0.5s ease-out forwards;
 }
 
-/* Overlay de Succès Connexion MAGIQUE */
+/* ============================================
+   Overlay de Succès Connexion
+   CACHÉ par défaut — visible UNIQUEMENT avec .active
+   ============================================ */
 #login-success-overlay {
   position: fixed;
   top: 0; left: 0; width: 100%; height: 100%;
   background: radial-gradient(circle, rgba(10, 20, 30, 0.98), rgba(0, 0, 0, 1));
-  display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   z-index: 10000;
+  backdrop-filter: blur(15px);
+
+  /* CACHÉ par défaut */
+  display: none;
   opacity: 0;
   visibility: hidden;
-  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-  backdrop-filter: blur(15px);
 }
 
+/* VISIBLE uniquement quand .active est ajouté par JS */
 #login-success-overlay.active {
+  display: flex;
   opacity: 1;
   visibility: visible;
+  transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* L'anneau qui tourne */
@@ -208,8 +216,8 @@ body {
 }
 
 @keyframes spinRing {
-  0% { transform: rotate(0deg); box-shadow: 0 0 10px rgba(46, 204, 113, 0.2); }
-  50% { box-shadow: 0 0 30px rgba(46, 204, 113, 0.5); }
+  0%   { transform: rotate(0deg);   box-shadow: 0 0 10px rgba(46, 204, 113, 0.2); }
+  50%  {                             box-shadow: 0 0 30px rgba(46, 204, 113, 0.5); }
   100% { transform: rotate(360deg); box-shadow: 0 0 10px rgba(46, 204, 113, 0.2); }
 }
 
@@ -275,8 +283,8 @@ body {
 }
 
 @keyframes pulseSuccess {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.02); }
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.02); }
   100% { transform: scale(1); }
 }
 
