@@ -1,8 +1,26 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from django.contrib.auth import login
+from django.contrib.auth import authenticate, login
+from django.http import JsonResponse
 from .models import Utilisateur
 from apps.employes.models import Employe
+
+
+def login_view(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+
+        user = authenticate(request, username=username, password=password)
+
+        if user is not None:
+            login(request, user)
+            return JsonResponse({'success': True, 'redirect_url': '/pointages/dashboard/'})
+        else:
+            return JsonResponse({'success': False, 'message': 'Identifiant ou mot de passe incorrect'}, status=400)
+
+    return render(request, 'accounts/login.html')
+
 
 def initialiser_compte(request):
     if request.method == 'POST':
@@ -15,16 +33,13 @@ def initialiser_compte(request):
             messages.error(request, "Les mots de passe ne correspondent pas.")
             return render(request, 'accounts/init_password.html')
 
-        # Trouver l'employé par matricule et email
         emp = Employe.objects.filter(matricule=matricule, email=email).first()
         if not emp:
             messages.error(request, "Aucun employé trouvé avec ces informations.")
             return render(request, 'accounts/init_password.html')
 
-        # Trouver ou créer l'utilisateur associé
         user = Utilisateur.objects.filter(username=matricule).first()
         if not user:
-            # Si l'admin a créé l'employé mais pas l'utilisateur
             user = Utilisateur.objects.create_user(
                 username=matricule,
                 email=email,
@@ -34,11 +49,10 @@ def initialiser_compte(request):
             )
             messages.success(request, "Compte créé avec succès ! Vous pouvez maintenant vous connecter.")
         else:
-            # Si l'utilisateur existe déjà (créé par l'admin)
             user.set_password(password)
             user.save()
             messages.success(request, "Mot de passe configuré ! Connectez-vous.")
-            
+
         return redirect('accounts:login')
 
     return render(request, 'accounts/init_password.html')
