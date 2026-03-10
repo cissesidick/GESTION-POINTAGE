@@ -90,7 +90,6 @@ body {
   font-variant-numeric: tabular-nums;
 }
 
-/* Styles pour Page Login */
 .login-container {
   width: 100%;
   max-width: 480px;
@@ -102,7 +101,6 @@ body {
   background: #080a0f !important;
 }
 
-/* Geofencing */
 .geo-ok {
   background: rgba(25, 135, 84, 0.1) !important;
   color: #198754;
@@ -144,7 +142,6 @@ body {
   }
 }
 
-/* Bouton Menu Mobile */
 .mobile-toggle {
   display: none;
 }
@@ -176,10 +173,7 @@ body {
   animation: fadeInUp 0.5s ease-out forwards;
 }
 
-/* ============================================
-   Overlay de Succès Connexion
-   CACHÉ par défaut — visible UNIQUEMENT avec .active
-   ============================================ */
+/* Overlay Succès — CACHÉ par défaut */
 #login-success-overlay {
   position: fixed;
   top: 0; left: 0; width: 100%; height: 100%;
@@ -189,14 +183,11 @@ body {
   justify-content: center;
   z-index: 10000;
   backdrop-filter: blur(15px);
-
-  /* CACHÉ par défaut */
   display: none;
   opacity: 0;
   visibility: hidden;
 }
 
-/* VISIBLE uniquement quand .active est ajouté par JS */
 #login-success-overlay.active {
   display: flex;
   opacity: 1;
@@ -204,7 +195,6 @@ body {
   transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* L'anneau qui tourne */
 .success-ring {
   width: 140px;
   height: 140px;
@@ -241,7 +231,6 @@ body {
   transform: scale(1) rotate(0deg);
 }
 
-/* La coche animée */
 .checkmark-path {
   fill: none;
   stroke: white;
@@ -257,6 +246,7 @@ body {
   to { stroke-dashoffset: 0; }
 }
 
+/* CACHÉ par défaut — ne déborde plus hors de l'overlay */
 .success-text {
   color: #2ecc71;
   font-size: 2.2rem;
@@ -264,14 +254,13 @@ body {
   text-transform: uppercase;
   letter-spacing: 4px;
   text-shadow: 0 0 20px rgba(46, 204, 113, 0.4);
-  opacity: 0;
+  display: none;
   transform: scale(0.8);
   transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.2) 0.3s;
-  position: absolute;
-  bottom: 30%;
 }
 
 #login-success-overlay.active .success-text {
+  display: block;
   opacity: 1;
   transform: scale(1);
 }
@@ -297,7 +286,6 @@ body {
 .kpi-card:nth-child(3) { animation-delay: 0.2s; }
 .kpi-card:nth-child(4) { animation-delay: 0.3s; }
 
-/* Optimisation Impression */
 @media print {
   .sidebar, .navbar, .btn, .card-header .d-flex, .col-lg-3, .login-container {
     display: none !important;
