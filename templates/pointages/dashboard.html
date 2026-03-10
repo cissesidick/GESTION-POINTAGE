@@ -1,46 +1,27 @@
 {% extends 'base.html' %}
+
 {% block title %}Dashboard | PointagePro{% endblock %}
 {% block page_title %}Tableau de bord Général{% endblock %}
 
 {% block content %}
 <!-- KPI Cards -->
 <div class="row g-4 mb-4">
+  {% for i in range(1,5) %}
   <div class="col-md-3 col-6">
-    <div class="card kpi-card p-4 border-{{ kpis.color_1 }} border-opacity-10 shadow-sm rounded-4 h-100">
+    <div class="card kpi-card p-4 border-{{ kpis['color_' ~ i] }} border-opacity-10 shadow-sm rounded-4 h-100">
       <div class="d-flex justify-content-between align-items-center mb-3">
-        <div class="text-muted small fw-bold">{{ kpis.label_1 }}</div>
-        <div class="btn btn-sm btn-{{ kpis.color_1 }} bg-opacity-10 text-{{ kpis.color_1 }} border-0"><i class="bi bi-person-check"></i></div>
+        <div class="text-muted small fw-bold">{{ kpis['label_' ~ i] }}</div>
+        <div class="btn btn-sm btn-{{ kpis['color_' ~ i] }} bg-opacity-10 text-{{ kpis['color_' ~ i] }} border-0">
+          {% if i == 1 %}<i class="bi bi-person-check"></i>{% endif %}
+          {% if i == 2 %}<i class="bi bi-clock"></i>{% endif %}
+          {% if i == 3 %}<i class="bi bi-geo-alt"></i>{% endif %}
+          {% if i == 4 %}<i class="bi bi-calendar-check"></i>{% endif %}
+        </div>
       </div>
-      <h2 class="m-0 fw-bold">{{ kpis.val_1 }}</h2>
+      <h2 class="m-0 fw-bold">{{ kpis['val_' ~ i] }}</h2>
     </div>
   </div>
-  <div class="col-md-3 col-6">
-    <div class="card kpi-card p-4 border-{{ kpis.color_2 }} border-opacity-10 shadow-sm rounded-4 h-100">
-      <div class="d-flex justify-content-between align-items-center mb-3">
-        <div class="text-muted small fw-bold">{{ kpis.label_2 }}</div>
-        <div class="btn btn-sm btn-{{ kpis.color_2 }} bg-opacity-10 text-{{ kpis.color_2 }} border-0"><i class="bi bi-clock"></i></div>
-      </div>
-      <h2 class="m-0 fw-bold">{{ kpis.val_2 }}</h2>
-    </div>
-  </div>
-  <div class="col-md-3 col-6">
-    <div class="card kpi-card p-4 border-{{ kpis.color_3 }} border-opacity-10 shadow-sm rounded-4 h-100">
-      <div class="d-flex justify-content-between align-items-center mb-3">
-        <div class="text-muted small fw-bold">{{ kpis.label_3 }}</div>
-        <div class="btn btn-sm btn-{{ kpis.color_3 }} bg-opacity-10 text-{{ kpis.color_3 }} border-0"><i class="bi bi-geo-alt"></i></div>
-      </div>
-      <h2 class="m-0 fw-bold">{{ kpis.val_3 }}</h2>
-    </div>
-  </div>
-  <div class="col-md-3 col-6">
-    <div class="card kpi-card p-4 border-{{ kpis.color_4 }} border-opacity-10 shadow-sm rounded-4 h-100">
-      <div class="d-flex justify-content-between align-items-center mb-3">
-        <div class="text-muted small fw-bold">{{ kpis.label_4 }}</div>
-        <div class="btn btn-sm btn-{{ kpis.color_4 }} bg-opacity-10 text-{{ kpis.color_4 }} border-0"><i class="bi bi-calendar-check"></i></div>
-      </div>
-      <h2 class="m-0 fw-bold">{{ kpis.val_4 }}</h2>
-    </div>
-  </div>
+  {% endfor %}
 </div>
 
 <div class="row g-4">

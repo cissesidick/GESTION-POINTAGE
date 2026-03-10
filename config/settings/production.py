@@ -1,7 +1,7 @@
 from .base import *
 import os
 
-DEBUG = True  # ← était True, c'est le bug principal
+DEBUG = False
 
 ALLOWED_HOSTS = ['.vercel.app', 'now.sh', 'localhost', '127.0.0.1']
 
@@ -11,5 +11,5 @@ SECURE_SSL_REDIRECT = False
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 
-# Statiques — override explicite ici pour être sûr
-STATICFILES_STORAGE = 'whitenoise.storage.StaticFilesStorage'
+# Statiques — override explicite pour la prod
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'

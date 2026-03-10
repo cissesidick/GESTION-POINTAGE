@@ -1,10 +1,12 @@
 import os
 from pathlib import Path
 from dotenv import load_dotenv
+import dj_database_url
 
 load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
+
 SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-key')
 AUTH_USER_MODEL = 'accounts.Utilisateur'
 
@@ -59,8 +61,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'config.wsgi.application'
 
-import dj_database_url
-
 DATABASES = {
     'default': dj_database_url.config(
         default=f"postgres://{os.environ.get('SUPABASE_DB_USER')}:{os.environ.get('SUPABASE_DB_PASSWORD')}@{os.environ.get('SUPABASE_DB_HOST')}:{os.environ.get('SUPABASE_DB_PORT')}/{os.environ.get('SUPABASE_DB_NAME')}",
@@ -69,16 +69,18 @@ DATABASES = {
     )
 }
 
+# Statiques
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_DIRS = [BASE_DIR / 'static']
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 LANGUAGE_CODE = 'fr-fr'
 TIME_ZONE = 'Africa/Abidjan'
 USE_I18N = True
 USE_TZ = True
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+WHITENOISE_MANIFEST_STRICT = False
 
 LOGIN_URL = '/auth/login/'
 LOGIN_REDIRECT_URL = '/pointages/dashboard/'
