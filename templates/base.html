@@ -105,10 +105,10 @@
       <div class="container-fluid p-4">
         {% for message in get_messages(request) %}
         <div
-          class="alert alert-{{ 'success' if 'success' in message.tags else 'danger' }} alert-dismissible fade show mb-4"
+          class="alert alert-{{ 'success' if message.tags == 'success' else 'danger' }} alert-dismissible fade show mb-4"
           role="alert"
         >
-          {% if 'success' in message.tags %}<i class="bi bi-check-circle-fill me-2"></i>{% endif %}
+          {% if message.tags == 'success' %}<i class="bi bi-check-circle-fill me-2"></i>{% endif %}
           {{ message }}
           <button
             type="button"
