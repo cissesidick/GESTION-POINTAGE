@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="fr" data-bs-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Connexion | PointagePro</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link href="{{ static('css/custom.css') }}" rel="stylesheet">
+</head>
+<body class="d-flex align-items-center justify-content-center min-vh-100 bg-dark-page">
+
+<div class="login-container p-4">
+  <div class="card bg-dark border-secondary border-opacity-10 shadow-lg rounded-4 p-4 p-md-5">
+    <div class="text-center mb-4">
+      <div class="logo-box bg-primary p-3 rounded-circle d-inline-block mb-3">
+        <i class="bi bi-clock-history fs-1 text-white"></i>
+      </div>
+      <h3 class="fw-bold">PointagePro</h3>
+      <p class="text-muted small">Système de pointage entreprise</p>
+    </div>
+
+    {% for message in get_messages(request) %}
+      <div class="alert alert-{{ 'success' if 'success' in message.tags else 'danger' }} small">
+        {% if 'success' in message.tags %}<i class="bi bi-check-circle-fill me-1"></i>{% endif %}
+        {{ message }}
+      </div>
+    {% endfor %}
+
+    <form method="POST" action="{{ url('accounts:login') }}" id="login-form">
+      {{ django_csrf_input(request) }}
+      <div class="mb-3">
+        <label class="form-label small text-muted">IDENTIFIANT</label>
+        <div class="input-group">
+          <span class="input-group-text bg-dark border-secondary border-opacity-25"><i class="bi bi-person"></i></span>
+          <input type="text" name="username" class="form-control bg-dark border-secondary border-opacity-25 py-2" placeholder="Votre matricule ou email" required>
+        </div>
+      </div>
+      <div class="mb-4">
+        <div class="d-flex justify-content-between align-items-center mb-1">
+          <label class="form-label small text-muted m-0">MOT DE PASSE</label>
+          <a href="#" class="text-primary small text-decoration-none">Mot de passe oublié ?</a>
+        </div>
+        <div class="input-group">
+          <span class="input-group-text bg-dark border-secondary border-opacity-25"><i class="bi bi-lock"></i></span>
+          <input type="password" name="password" class="form-control bg-dark border-secondary border-opacity-25 py-2" placeholder="********" required>
+        </div>
+      </div>
+      
+      <button type="submit" id="btn-login" class="btn btn-primary w-100 py-3 fw-bold rounded-3">
+        <span class="btn-text"><i class="bi bi-box-arrow-in-right me-2"></i> SE CONNECTER</span>
+        <span class="spinner-border spinner-border-sm d-none" role="status"></span>
+      </button>
+    </form>
+    
+    <div class="text-center mt-3">
+      <a href="{{ url('accounts:init') }}" class="text-primary small text-decoration-none fw-bold">Première connexion ? Activer mon compte</a>
+    </div>
+    
+    <div class="text-center mt-5 text-muted small">
+      Besoin d'aide ? Contactez le service RH au <strong>ext. 404</strong>
+    </div>
+  </div>
+</div>
+
+<!-- Overlay Succès MAGIQUE -->
+<div id="login-success-overlay">
+  <div class="success-ring"></div>
+  <div class="success-icon-wrapper">
+    <svg width="60" height="60" viewBox="0 0 52 52">
+      <path class="checkmark-path" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+    </svg>
+  </div>
+  <div class="success-text">Connexion Réussie</div>
+</div>
+
+<script>
+document.getElementById('login-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const form = this;
+    const btn = document.getElementById('btn-login');
+    const text = btn.querySelector('.btn-text');
+    const spinner = btn.querySelector('.spinner-border');
+    const overlay = document.getElementById('login-success-overlay');
+    
+    // Reset alertes
+    document.querySelectorAll('.alert').forEach(a => a.remove());
+
+    // État Chargement
+    text.classList.add('d-none');
+    spinner.classList.remove('d-none');
+    btn.disabled = true;
+
+    const formData = new FormData(form);
+    
+    fetch(form.action, {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'X-CSRFToken': formData.get('csrfmiddlewaretoken')
+        }
+    })
+    .then(response => {
+        if (response.ok) return response.json();
+        return response.json().then(err => { throw err; });
+    })
+    .then(data => {
+        if (data.success) {
+            // ANIMATION WOW
+            overlay.classList.add('active');
+            
+            // Redirection RAPIDE (1.2s)
+            setTimeout(() => {
+                window.location.href = data.redirect_url;
+            }, 1200);
+        }
+    })
+    .catch(error => {
+        // Retour à l'état normal
+        text.classList.remove('d-none');
+        spinner.classList.add('d-none');
+        btn.disabled = false;
+        
+        // Afficher l'erreur
+        const alert = document.createElement('div');
+        alert.className = 'alert alert-danger small animate-fade-up';
+        alert.textContent = error.message || "Erreur de connexion";
+        form.parentNode.insertBefore(alert, form);
+    });
+});
+</script>
+
+</body>
+</html>

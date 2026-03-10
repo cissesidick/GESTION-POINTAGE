@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Connexion | Projet Pointage</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background: #0b0e14; color: white; display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+        .card { background: #141923; border: 1px solid rgba(255,255,255,0.05); width: 100%; max-width: 400px; padding: 2rem; border-radius: 1rem; }
+        input { background: #0b0e14 !important; border: 1px solid rgba(255,255,255,0.1) !important; color: white !important; }
+    </style>
+</head>
+<body>
+    <div class="card shadow-lg">
+        <h2 class="text-center mb-4">Connexion</h2>
+        
+        <form method="post">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label class="form-label text-muted small">IDENTIFIANT</label>
+                <input type="text" name="username" class="form-control py-2" required>
+            </div>
+            <div class="mb-4">
+                <label class="form-label text-muted small">MOT DE PASSE</label>
+                <input type="password" name="password" class="form-control py-2" required>
+            </div>
+            <button type="submit" class="btn btn-primary w-100 py-2">SE CONNECTER</button>
+        </form>
+
+        {% if form.errors %}
+        <div class="alert alert-danger mt-3 small">
+            Identifiants incorrects. Veuillez réessayer.
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>

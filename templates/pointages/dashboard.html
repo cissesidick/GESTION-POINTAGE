@@ -1,0 +1,134 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard | PointagePro{% endblock %}
+{% block page_title %}Tableau de bord Général{% endblock %}
+
+{% block content %}
+<!-- KPI Cards -->
+<div class="row g-4 mb-4">
+  <div class="col-md-3 col-6">
+    <div class="card kpi-card p-4 border-{{ kpis.color_1 }} border-opacity-10 shadow-sm rounded-4 h-100">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <div class="text-muted small fw-bold">{{ kpis.label_1 }}</div>
+        <div class="btn btn-sm btn-{{ kpis.color_1 }} bg-opacity-10 text-{{ kpis.color_1 }} border-0"><i class="bi bi-person-check"></i></div>
+      </div>
+      <h2 class="m-0 fw-bold">{{ kpis.val_1 }}</h2>
+    </div>
+  </div>
+  <div class="col-md-3 col-6">
+    <div class="card kpi-card p-4 border-{{ kpis.color_2 }} border-opacity-10 shadow-sm rounded-4 h-100">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <div class="text-muted small fw-bold">{{ kpis.label_2 }}</div>
+        <div class="btn btn-sm btn-{{ kpis.color_2 }} bg-opacity-10 text-{{ kpis.color_2 }} border-0"><i class="bi bi-clock"></i></div>
+      </div>
+      <h2 class="m-0 fw-bold">{{ kpis.val_2 }}</h2>
+    </div>
+  </div>
+  <div class="col-md-3 col-6">
+    <div class="card kpi-card p-4 border-{{ kpis.color_3 }} border-opacity-10 shadow-sm rounded-4 h-100">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <div class="text-muted small fw-bold">{{ kpis.label_3 }}</div>
+        <div class="btn btn-sm btn-{{ kpis.color_3 }} bg-opacity-10 text-{{ kpis.color_3 }} border-0"><i class="bi bi-geo-alt"></i></div>
+      </div>
+      <h2 class="m-0 fw-bold">{{ kpis.val_3 }}</h2>
+    </div>
+  </div>
+  <div class="col-md-3 col-6">
+    <div class="card kpi-card p-4 border-{{ kpis.color_4 }} border-opacity-10 shadow-sm rounded-4 h-100">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <div class="text-muted small fw-bold">{{ kpis.label_4 }}</div>
+        <div class="btn btn-sm btn-{{ kpis.color_4 }} bg-opacity-10 text-{{ kpis.color_4 }} border-0"><i class="bi bi-calendar-check"></i></div>
+      </div>
+      <h2 class="m-0 fw-bold">{{ kpis.val_4 }}</h2>
+    </div>
+  </div>
+</div>
+
+<div class="row g-4">
+  <!-- Table Activité Groupée -->
+  <div class="col-lg-8">
+    <div class="card bg-dark border-secondary border-opacity-10 shadow-lg p-0 overflow-hidden">
+      <div class="card-header bg-dark border-secondary border-opacity-10 p-3 d-flex justify-content-between align-items-center">
+        <h6 class="m-0 fw-bold">Suivi des présences (Aujourd'hui)</h6>
+        <div class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 border border-primary border-opacity-25 rounded-pill">Direct</div>
+      </div>
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead class="table-dark">
+            <tr>
+              <th class="ps-4">EMPLOYÉ</th>
+              <th>ENTRÉE</th>
+              <th>SORTIE</th>
+              <th class="pe-4 text-center">DURÉE</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for s in seances %}
+            <tr>
+              <td class="ps-4">
+                <div class="fw-bold">{{ s.employe.nom_complet }}</div>
+                <div class="text-muted small">{{ s.employe.departement.nom or '-' }}</div>
+              </td>
+              <td class="text-success fw-bold">{{ s.heure_entree.strftime('%H:%M') }}</td>
+              <td class="text-warning fw-bold">
+                {{ s.heure_sortie.strftime('%H:%M') if s.heure_sortie else '--:--' }}
+              </td>
+              <td class="pe-4 text-center">
+                {% if s.est_complete %}
+                  <span class="badge bg-info bg-opacity-10 text-info border border-info border-opacity-25">{{ s.duree_heures }}h</span>
+                {% else %}
+                  <span class="badge bg-secondary bg-opacity-10 text-muted border border-secondary border-opacity-25">En cours...</span>
+                {% endif %}
+              </td>
+            </tr>
+            {% else %}
+            <tr>
+              <td colspan="4" class="text-center py-4 text-muted">Aucun pointage pour le moment</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Graphique -->
+  <div class="col-lg-4">
+    <div class="card bg-dark border-secondary border-opacity-10 shadow-lg p-4 h-100">
+      <h6 class="fw-bold mb-4">Volume Horaire (7j)</h6>
+      <canvas id="hoursChart" height="250"></canvas>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const ctx = document.getElementById('hoursChart');
+    if (ctx) {
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: {{ graph_labels|tojson }},
+                datasets: [{
+                    label: 'Heures totales',
+                    data: {{ graph_data|tojson }},
+                    backgroundColor: '#3b82f6',
+                    borderRadius: 8,
+                    barThickness: 15
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { grid: { color: 'rgba(255,255,255,0.05)' }, border: { display: false } },
+                    x: { grid: { display: false }, border: { display: false } }
+                }
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

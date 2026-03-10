@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% block title %}Historique | PointagePro{% endblock %}
+{% block page_title %}Registre des pointages{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col-12">
+    <div class="card bg-dark border-secondary border-opacity-10 shadow-lg p-0 overflow-hidden">
+      <div class="card-header bg-dark border-secondary border-opacity-10 p-3 d-flex justify-content-between align-items-center">
+        <h5 class="m-0 fw-bold"><i class="bi bi-clock-history me-2"></i>Journal de présence</h5>
+        
+        {% if request.user.role in ('admin', 'rh') %}
+        <form class="d-flex gap-2" method="GET">
+           <select name="employe" class="form-select form-select-sm bg-dark border-secondary border-opacity-25 text-white" style="width: 200px;" onchange="this.form.submit()">
+              <option value="">-- Tous les employés --</option>
+              {% for emp in employes %}
+              <option value="{{ emp.id }}" {% if request.GET.get('employe') == emp.id|string %}selected{% endif %}>{{ emp.nom_complet }}</option>
+              {% endfor %}
+           </select>
+        </form>
+        {% endif %}
+      </div>
+      
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead class="table-dark">
+            <tr>
+              <th class="ps-4">DATE</th>
+              {% if request.user.role in ('admin', 'rh') %}
+              <th>EMPLOYÉ</th>
+              {% endif %}
+              <th>ENTRÉE</th>
+              <th>SORTIE</th>
+              <th>DURÉE</th>
+              <th class="pe-4">STATUT GÉO</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for s in seances %}
+            <tr>
+              <td class="ps-4">
+                <div class="fw-bold">{{ s.date.strftime('%d/%m/%Y') }}</div>
+              </td>
+              {% if request.user.role in ('admin', 'rh') %}
+              <td>
+                <div class="small fw-bold">{{ s.employe.nom_complet }}</div>
+                <div class="text-muted smaller">{{ s.employe.matricule }}</div>
+              </td>
+              {% endif %}
+              <td>
+                <div class="text-success fw-bold">{{ s.heure_entree.strftime('%H:%M') }}</div>
+                <div class="text-muted smaller">{{ s.pointage_entree.motif }}</div>
+              </td>
+              <td>
+                {% if s.heure_sortie %}
+                  <div class="text-warning fw-bold">{{ s.heure_sortie.strftime('%H:%M') }}</div>
+                  <div class="text-muted smaller">{{ s.pointage_sortie.motif if s.pointage_sortie else 'Normal' }}</div>
+                {% else %}
+                  <span class="text-muted small">--:--</span>
+                {% endif %}
+              </td>
+              <td>
+                {% if s.est_complete %}
+                  <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-10 px-3">
+                    {{ s.duree_heures }} h
+                  </span>
+                {% else %}
+                  <span class="text-muted small italic">En cours...</span>
+                {% endif %}
+              </td>
+              <td class="pe-4">
+                {% if s.pointage_entree.dans_zone %}
+                  <span class="text-success small"><i class="bi bi-check-circle-fill"></i> Ok</span>
+                {% else %}
+                  <span class="text-danger small"><i class="bi bi-x-circle-fill"></i> Hors-zone</span>
+                {% endif %}
+              </td>
+            </tr>
+            {% else %}
+            <tr>
+              <td colspan="6" class="text-center py-5 text-muted">
+                <i class="bi bi-info-circle mb-2 d-block fs-1 opacity-25"></i>
+                Aucun historique disponible.
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

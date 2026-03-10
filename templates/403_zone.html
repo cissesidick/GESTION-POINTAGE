@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block title %}Zone Interdite | PointagePro{% endblock %}
+{% block page_title %}Accès Refusé{% endblock %}
+
+{% block content %}
+<div class="text-center py-5">
+  <div class="my-5">
+    <i class="bi bi-exclamation-triangle-fill text-danger display-1 shadow-sm"></i>
+  </div>
+  <h2 class="fw-bold">Accès Non Autorisé</h2>
+  <p class="text-muted">Vous n'avez pas les permissions pour accéder à cette zone.</p>
+  <a href="/" class="btn btn-primary btn-lg mt-4 px-5 rounded-pill">RETOUR AU DASHBOARD</a>
+</div>
+{% endblock %}

@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% block title %}{{ employe.nom_complet }} | PointagePro{% endblock %}
+{% block page_title %}Fiche Employé{% endblock %}
+
+{% block content %}
+<div class="row g-4">
+  <div class="col-lg-4">
+    <div class="card bg-dark border-secondary border-opacity-10 shadow-lg p-4 text-center">
+       <div class="avatar-box bg-primary mx-auto mb-3 borderRadius-circle d-flex align-items-center justify-content-center" style="width: 100px; height: 100px;">
+          <span class="fs-1 fw-bold text-white">{{ employe.nom|first|upper }}</span>
+       </div>
+       <h4 class="fw-bold mb-1">{{ employe.nom_complet }}</h4>
+       <p class="text-muted small mb-3 text-uppercase">{{ employe.poste }}</p>
+       <span class="badge bg-{{ 'success' if employe.statut == 'actif' else 'danger' }} bg-opacity-10 text-{{ 'success' if employe.statut == 'actif' else 'danger' }} border border-{{ 'success' if employe.statut == 'actif' else 'danger' }} px-3 py-2 rounded-pill">
+          {{ employe.get_statut_display() }}
+       </span>
+    </div>
+  </div>
+  <div class="col-lg-8">
+    <div class="card bg-dark border-secondary border-opacity-10 shadow-lg p-4">
+       <h5 class="fw-bold mb-4">Informations Dossier</h5>
+       <div class="row g-3">
+          <div class="col-md-6">
+             <label class="small text-muted fw-bold d-block">SERVICE</label>
+             <span>{{ employe.departement.nom if employe.departement else '-' }}</span>
+          </div>
+          <div class="col-md-6">
+             <label class="small text-muted fw-bold d-block">CHROMA ID (MATRICULE)</label>
+             <span class="font-monospace">{{ employe.matricule }}</span>
+          </div>
+          <div class="col-md-6">
+             <label class="small text-muted fw-bold d-block">EMAIL</label>
+             <span>{{ employe.email }}</span>
+          </div>
+          <div class="col-md-6">
+             <label class="small text-muted fw-bold d-block">TÉLÉPHONE</label>
+             <span>{{ employe.telephone }}</span>
+          </div>
+          <div class="col-md-6">
+             <label class="small text-muted fw-bold d-block">EN CONTRAT DEPUIS LE</label>
+              <span>{{ employe.date_embauche.strftime('%d %B %Y') if employe.date_embauche else '-' }}</span>
+          </div>
+          <div class="col-md-6">
+             <label class="small text-muted fw-bold d-block">HEURES / JOUR</label>
+             <span>{{ employe.heures_contrat }} heures</span>
+          </div>
+       </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

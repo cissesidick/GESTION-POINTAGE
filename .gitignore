@@ -1,0 +1,15 @@
+__pycache__/
+*.py[cod]
+*$py.class
+.env
+db.sqlite3
+staticfiles/
+staticfiles_build/
+.vercel
+node_modules/
+.venv
+venv/
+env/
+dist/
+build/
+*.log

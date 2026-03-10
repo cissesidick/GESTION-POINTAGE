@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% block title %}Pointer | PointagePro{% endblock %}
+{% block page_title %}Enregistrer un pointage{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-6">
+    <div id="geo-alert" class="alert d-flex align-items-center gap-3 py-3 mb-4 rounded-3 shadow-sm border-0">
+      <div class="spinner-border spinner-border-sm" role="status"></div>
+      <span id="geo-status-text">Récupération de votre position GPS...</span>
+    </div>
+
+    <div class="card bg-dark border-secondary border-opacity-10 shadow-lg p-4">
+      <h5 class="mb-4 fw-bold"><i class="bi bi-info-circle me-2"></i>Détails du pointage</h5>
+      
+      <form method="POST" id="form-pointage">
+        {{ django_csrf_input(request) }}
+        <div class="mb-4">
+          <label class="form-label text-muted small fw-bold">EMPLOYÉ</label>
+          <select name="employe_id" id="employe_id" class="form-select form-select-lg bg-dark border-secondary border-opacity-25" required>
+            <option value="">-- Choisir un employé --</option>
+            {% for item in employes_statuts %}
+            <option value="{{ item.employe.id }}" data-statut="{{ item.statut }}" {% if item.statut == 'sorti' %}disabled{% endif %}>
+              {% if item.statut == 'sorti' %}🚫 {% endif %}
+              {{ item.employe.nom_complet }} 
+              {% if item.statut == 'sorti' %} (Journée terminée) {% else %} ({{ item.employe.matricule }}) {% endif %}
+            </option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="mb-4">
+          <label class="form-label text-muted small fw-bold">MOTIF</label>
+          <div class="row g-3">
+             <div class="col-8">
+               <select name="motif" class="form-select bg-dark border-secondary border-opacity-25">
+                 <option value="normal">Normal</option>
+                 <option value="mission">Mission</option>
+                 <option value="heures_sup">Heures supplémentaires</option>
+                 <option value="rattrapage">Rattrapage</option>
+               </select>
+             </div>
+             <div class="col-4">
+               <div class="form-control bg-dark border-secondary border-opacity-25 text-center text-muted small">
+                  LAT: <span id="lat-val">--</span>
+               </div>
+             </div>
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <label class="form-label text-muted small fw-bold">NOTE (OPTIONNEL)</label>
+          <textarea name="note" class="form-control bg-dark border-secondary border-opacity-25" rows="3" placeholder="Un commentaire ou une justification..."></textarea>
+        </div>
+
+        <button type="submit" id="btn-submit" class="btn btn-lg btn-primary w-100 py-3 fw-bold disabled">
+          <i class="bi bi-plus-circle me-2"></i> SÉLECTIONNER UN EMPLOYÉ
+        </button>
+      </form>
+    </div>
+    
+    <div class="text-center mt-4 text-muted small">
+      <i class="bi bi-shield-check me-2"></i> Le pointage est sécurisé par géolocalisation.
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ static('js/geofencing.js') }}"></script>
+<script>
+document.getElementById('employe_id').addEventListener('change', function() {
+    const btn = document.getElementById('btn-submit');
+    const opt = this.options[this.selectedIndex];
+    if (this.value) {
+        const type = opt.dataset.statut === 'present' ? 'SORTIE' : 'ENTRÉE';
+        btn.innerHTML = `<i class="bi bi-box-arrow-in-right me-2"></i> ENREGISTRER LA ${type}`;
+        if (window.isGeoValid) btn.classList.remove('disabled');
+    } else {
+        btn.innerHTML = `<i class="bi bi-plus-circle me-2"></i> SÉLECTIONNER UN EMPLOYÉ`;
+        btn.classList.add('disabled');
+    }
+});
+</script>
+{% endblock %}
