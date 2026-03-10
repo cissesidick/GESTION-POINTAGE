@@ -1,7 +1,7 @@
 from .base import *
 import os
 
-DEBUG = False  # ← était True, c'est le bug principal
+DEBUG = True  # ← était True, c'est le bug principal
 
 ALLOWED_HOSTS = ['.vercel.app', 'now.sh', 'localhost', '127.0.0.1']
 
